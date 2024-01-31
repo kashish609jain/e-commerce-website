@@ -1,0 +1,7 @@
+Django==5.0.1
+django-cors-headers==4.3.1
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+PyJWT==1.7.1
+pytz==2023.4
+sqlparse==0.4.4
