@@ -10,46 +10,60 @@ from django.shortcuts import get_object_or_404
 # Import models, permissions, and serializers from the application
 from .models import CustomUser, Vendor
 from .permissions import IsVendor
-from .serializers import  VendorSerializer, UserLoginSerializer, MasterVendorSerializer
-
+from .serializers import  VendorSerializer, UserLoginSerializer
 # Define a view for vendor registration
+# class VendorRegistrationView(generics.CreateAPIView):
+#     permission_classes = (AllowAny,)  # Allow any user to access this view
+#     serializer_class = VendorSerializer  # Use VendorSerializer for data validation
+
+#     def post(self, request, *args, **kwargs):
+#         # import ipdb; ipdb.set_trace()
+#         print(request.data)
+#         serializer = self.get_serializer(data=request.data)  # Create a serializer instance with request data
+#         serializer.is_valid(raise_exception=True)  # Validate the data, raise an exception if invalid
+#         vendor = serializer.save()  # Save the validated data to create a new Vendor instance
+
+#         # Additional logic for vendor registration if needed
+     
+#         return Response(
+#             {"detail": "Vendor registered successfully!"},
+#             status=status.HTTP_201_CREATED
+#         ) 
+# class MasterVendorRegistrationView(generics.CreateAPIView):
+#     permission_classes = (AllowAny,)  # Allow any user to access this view
+#     serializer_class = MasterVendorSerializer # Use VendorSerializer for data validation
+
+#     def post(self, request, *args, **kwargs):
+#         # import ipdb; ipdb.set_trace()
+#         print(request.data)
+#         serializer = self.get_serializer(data=request.data)  # Create a serializer instance with request data
+#         serializer.is_valid(raise_exception=True)  # Validate the data, raise an exception if invalid
+#         vendor = serializer.save()  # Save the validated data to create a new Vendor instance
+
+#         # Additional logic for vendor registration if needed
+     
+#         return Response(
+#             {"detail": "Vendor registered successfully!"},
+#             status=status.HTTP_201_CREATED
+#         )     
+
 class VendorRegistrationView(generics.CreateAPIView):
-    permission_classes = (AllowAny,)  # Allow any user to access this view
-    serializer_class = VendorSerializer  # Use VendorSerializer for data validation
+    permission_classes = (AllowAny,)
+    serializer_class = VendorSerializer
 
     def post(self, request, *args, **kwargs):
         # import ipdb; ipdb.set_trace()
         print(request.data)
-        serializer = self.get_serializer(data=request.data)  # Create a serializer instance with request data
-        serializer.is_valid(raise_exception=True)  # Validate the data, raise an exception if invalid
-        vendor = serializer.save()  # Save the validated data to create a new Vendor instance
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        vendor = serializer.save()
 
         # Additional logic for vendor registration if needed
-     
+
         return Response(
             {"detail": "Vendor registered successfully!"},
             status=status.HTTP_201_CREATED
-        ) 
-class MasterVendorRegistrationView(generics.CreateAPIView):
-    permission_classes = (AllowAny,)  # Allow any user to access this view
-    serializer_class = MasterVendorSerializer # Use VendorSerializer for data validation
-
-    def post(self, request, *args, **kwargs):
-        # import ipdb; ipdb.set_trace()
-        print(request.data)
-        serializer = self.get_serializer(data=request.data)  # Create a serializer instance with request data
-        print(f"SERIALIZER _________ {serializer}")
-        serializer.is_valid(raise_exception=True)  # Validate the data, raise an exception if invalid
-        print("==========================#############")
-        vendor = serializer.save()  # Save the validated data to create a new Vendor instance
-
-        # Additional logic for vendor registration if needed
-     
-        return Response(
-            {"detail": "Vendor registered successfully!"},
-            status=status.HTTP_201_CREATED
-        )     
-
+        )
 
 # Define a view for listing and creating vendors
 class VendorList(generics.ListCreateAPIView):

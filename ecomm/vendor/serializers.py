@@ -30,50 +30,85 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
+# class VendorSerializer(serializers.ModelSerializer):
+#     user = UserSerializer()
+#     master_email = serializers.EmailField(required=True)
+#     class Meta:
+#         model = Vendor
+#         fields = ("user", "shop_name", "phone_number", "master_email")
+
+#     def validate_master_email(self, value):
+#         master_vendor = CustomUser.objects.filter(email=value)
+#         if not master_vendor.exists():
+#             raise ValidationError("invalid master email address")
+#         return value
+
+#     def create(self, validated_data):
+#         print(validated_data)
+#         user_data = validated_data.pop("user")
+#         user_data.update({"user_type": "VENDOR"})
+#         # master_vendor=CustomUser.objects.filter(email=validated_data['master_email']).first()
+#         user = CustomUser.objects.create_user(**user_data)
+#         user.active = False
+#         user.save()
+#         vendor = Vendor.objects.create(user=user,**validated_data)
+#         return vendor
+        
+        
+# # serializer method feild  
+# class MasterVendorSerializer(serializers.ModelSerializer):
+#     user = UserSerializer()
+#     master_email = serializers.EmailField(required=False)
+#     class Meta:
+#         model = Vendor
+#         fields = ("user", "shop_name",  "phone_number","master_email")
+
+#     def create(self, validated_data):
+#         user_data = validated_data.pop("user")
+#         print(user_data)
+#         user_data.update({"user_type": "VENDOR"})
+#         user = CustomUser.objects.create_user(**user_data)
+#         user.active = False
+#         user.save()
+        
+#         vendor = Vendor.objects.create(user=user,**validated_data)
+#         return vendor
 class VendorSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    master_email = serializers.EmailField(required=True)
+    master_email = serializers.EmailField(required=False)
+
     class Meta:
         model = Vendor
         fields = ("user", "shop_name", "phone_number", "master_email")
 
     def validate_master_email(self, value):
-        master_vendor = CustomUser.objects.filter(email=value)
-        if not master_vendor.exists():
-            raise ValidationError("invalid master email address")
+        if value:
+            master_vendor = CustomUser.objects.filter(email=value)
+            if not master_vendor.exists():
+                raise ValidationError("Invalid master email address")
         return value
 
     def create(self, validated_data):
-        print(validated_data)
         user_data = validated_data.pop("user")
         user_data.update({"user_type": "VENDOR"})
-        master_vendor=CustomUser.objects.filter(email=validated_data['master_email']).first()
-        user = CustomUser.objects.create_user(**user_data)
-        user.active = False
-        user.save()
-        vendor = Vendor.objects.create(user=user,**validated_data)
-        return vendor
         
-        
-        
-class MasterVendorSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
-    master_email = serializers.EmailField(required=False)
-    class Meta:
-        model = Vendor
-        fields = ("user", "shop_name",  "phone_number","master_email")
+        master_email = validated_data.pop("master_email", None)
+        master_vendor = None
 
-    def create(self, validated_data):
-        user_data = validated_data.pop("user")
-        print(user_data)
-        user_data.update({"user_type": "VENDOR"})
+        if master_email:
+            master_vendor = CustomUser.objects.filter(email=master_email).first()
+
         user = CustomUser.objects.create_user(**user_data)
         user.active = False
         user.save()
-        
-        vendor = Vendor.objects.create(user=user,**validated_data)
+
+        if master_vendor:
+            vendor = Vendor.objects.create(user=user, master_vendor_id=master_vendor.uid, **validated_data)
+        else:
+            vendor = Vendor.objects.create(user=user, **validated_data)
+
         return vendor
-        
+
 
 class UserLoginSerializer(serializers.Serializer):
 
