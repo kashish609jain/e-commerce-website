@@ -29,8 +29,7 @@ class CustomUserManager(BaseUserManager):
         
 
 class CustomUser(AbstractUser):
- 
-   
+    
     USER_TYPE_CHOICES = (
       ('VENDOR', 'Vendor'),
       ('CUSTOMER', 'Customer'),
@@ -78,14 +77,4 @@ class Vendor(models.Model):
 
     def __str__(self):
         return self.shop_name
-
-# class FamilyMember(models.Model):
-#     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='family_members')
-#     name = models.CharField(max_length=200)
-   
-
-#     def __str__(self):
-#         return self.name
-    
-    
     

@@ -32,8 +32,6 @@ class UserSerializer(serializers.ModelSerializer):
 # family member ke liye ?
 class VendorSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    # questions ?
-    # what is need of this line , agar humne model mai ek baar daldiya hai to bhi dubara specify karne ka jarurat hai ki not required ? ki fetch karne ke liye 
     master_email = serializers.EmailField(required=False)
     class Meta:
         model = Vendor
@@ -47,21 +45,20 @@ class VendorSerializer(serializers.ModelSerializer):
         return value
 
     def create(self, validated_data):
-        # import ipdb; ipdb.set_trace()
         print(validated_data)
         user_data = validated_data.pop("user")
         user_data.update({"user_type": "VENDOR"})
-        master_vendor_user=CustomUser.objects.filter(email=validated_data['master_email']).first()
-        user_id = master_vendor_user.uid
+        master_vendor=CustomUser.objects.filter(email=validated_data['master_email']).first()
         user = CustomUser.objects.create_user(**user_data)
-        master_vendor_id = Vendor.objects.filter(user_id = user_id).first().user.uid
-        new_user = {'name': user.name, 'email': user.email}
-        vendor = Vendor.objects.create(user=user,master_vendor_id = master_vendor_id, **validated_data)
+        user.active = False
+        user.save()
+        vendor = Vendor.objects.create(user=user,**validated_data)
         return vendor
+        
+        
         
 class MasterVendorSerializer(serializers.ModelSerializer):
       user = UserSerializer()
-    #   master_email = serializers.EmailField(required=False)
       class Meta:
         model = Vendor
         fields = ("user", "shop_name",  "phone_number")
@@ -73,8 +70,8 @@ class MasterVendorSerializer(serializers.ModelSerializer):
             user = CustomUser.objects.create_user(**user_data)
             user.active = False
             user.save()
-            new_user =  {'name': user.name, 'email': user.email}
-            vendor = Vendor.objects.create(user=user, **validated_data)
+            
+            vendor = Vendor.objects.create(user=user,**validated_data)
             return vendor
         
 
