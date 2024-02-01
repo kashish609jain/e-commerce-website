@@ -38,7 +38,9 @@ class MasterVendorRegistrationView(generics.CreateAPIView):
         # import ipdb; ipdb.set_trace()
         print(request.data)
         serializer = self.get_serializer(data=request.data)  # Create a serializer instance with request data
+        print(f"SERIALIZER _________ {serializer}")
         serializer.is_valid(raise_exception=True)  # Validate the data, raise an exception if invalid
+        print("==========================#############")
         vendor = serializer.save()  # Save the validated data to create a new Vendor instance
 
         # Additional logic for vendor registration if needed

@@ -32,13 +32,12 @@ class UserSerializer(serializers.ModelSerializer):
 # family member ke liye ?
 class VendorSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    master_email = serializers.EmailField(required=False)
+    master_email = serializers.EmailField(required=True)
     class Meta:
         model = Vendor
         fields = ("user", "shop_name", "phone_number", "master_email")
 
     def validate_master_email(self, value):
-        # import ipdb; ipdb.set_trace()
         master_vendor = CustomUser.objects.filter(email=value)
         if not master_vendor.exists():
             raise ValidationError("invalid master email address")
@@ -58,21 +57,22 @@ class VendorSerializer(serializers.ModelSerializer):
         
         
 class MasterVendorSerializer(serializers.ModelSerializer):
-      user = UserSerializer()
-      class Meta:
+    user = UserSerializer()
+    master_email = serializers.EmailField(required=False)
+    class Meta:
         model = Vendor
-        fields = ("user", "shop_name",  "phone_number")
+        fields = ("user", "shop_name",  "phone_number","master_email")
 
-        def create(self, validated_data):
+    def create(self, validated_data):
+        user_data = validated_data.pop("user")
+        print(user_data)
+        user_data.update({"user_type": "VENDOR"})
+        user = CustomUser.objects.create_user(**user_data)
+        user.active = False
+        user.save()
         
-            user_data = validated_data.pop("user")
-            user_data.update({"user_type": "VENDOR"})
-            user = CustomUser.objects.create_user(**user_data)
-            user.active = False
-            user.save()
-            
-            vendor = Vendor.objects.create(user=user,**validated_data)
-            return vendor
+        vendor = Vendor.objects.create(user=user,**validated_data)
+        return vendor
         
 
 class UserLoginSerializer(serializers.Serializer):
