@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-k45f7l9pzj)o5jf2ua36459fex&nnwd+-ek&m!-(oxmo&%9#+2
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
+AUTH_USER_MODEL = "vendor.CustomUser"
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'customer',
     'vendor',
-    'product'
+    
 ]
 
 MIDDLEWARE = [

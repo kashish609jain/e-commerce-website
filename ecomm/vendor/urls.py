@@ -1,6 +1,5 @@
 from django.urls import path
-
-from .views import VendorList, VendorDetail, VendorLogin, VendorProfile,VendorRegistrationView
+from .views import VendorList, VendorDetail, VendorLogin, VendorProfile,VendorRegistrationView,MasterVendorRegistrationView
 
 
 urlpatterns = [
@@ -8,6 +7,7 @@ urlpatterns = [
     path('<int:uid>/', VendorDetail.as_view(), name='vendor_detail'),
     path('signin/', VendorLogin.as_view(), name='sign_in'), 
     path('register/', VendorRegistrationView.as_view(), name='vendor-register'),
+    path('master_register/',MasterVendorRegistrationView.as_view(), name='master-vendor-register'),
     path('dashboard/', VendorProfile.as_view(), name='vendor_dashboard')
 
 ]
