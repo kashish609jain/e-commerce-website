@@ -29,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create_user(**validated_data)
         return user
 
-# family member ke liye ?
+
 class VendorSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     master_email = serializers.EmailField(required=True)
