@@ -1,4 +1,3 @@
-from django.forms import EmailField
 from .exceptions import CustomException
 from .models import CustomUser, Vendor
 from rest_framework import serializers, generics, status
@@ -6,7 +5,6 @@ from django.core.exceptions import ValidationError
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
-from django.core.validators import EmailValidator
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -14,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = (
-            "uid",
+            "id",
             "email",
             "name",
             "password",
@@ -103,7 +101,7 @@ class VendorSerializer(serializers.ModelSerializer):
         user.save()
 
         if master_vendor:
-            vendor = Vendor.objects.create(user=user, master_vendor_id=master_vendor.uid, **validated_data)
+            vendor = Vendor.objects.create(user=user, master_vendor_id=master_vendor.id, **validated_data)
         else:
             vendor = Vendor.objects.create(user=user, **validated_data)
 
@@ -122,14 +120,22 @@ class UserLoginSerializer(serializers.Serializer):
         if user is None:
             raise CustomException({'detail':'User account does not exist'})
         
-        if not user.is_confirmed:
-            raise CustomException({'detail':'User account has not been confirmed'})
-        elif not user.user_type == 'VENDOR':
+        if not user.user_type == 'VENDOR':
             raise CustomException({'detail':"You are not authorized as a vendor "}, status_code=status.HTTP_401_UNAUTHORIZED)
 
        
         update_last_login(None, user)
-
+        
         return {
             'email':user.email,
         }
+
+class VendorDashboardSerializer(serializers.Serializer):
+       
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass       
+         
+      

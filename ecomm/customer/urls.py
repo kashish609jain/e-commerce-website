@@ -1,13 +1,9 @@
 from django.urls import path
-
-from .views import CustomerLogin
-
-from .views import CreateCustomer, CustomerProfile
+from .views import CreateCustomerView
 
 
 urlpatterns = [
-    path('', CreateCustomer.as_view(), name='all_vendors'),
-    path('dashboard/', CustomerProfile.as_view(), name='customer_dashboard'),
-    path('signin/', CustomerLogin.as_view(), name='sign_in'),
-    
+    path('register', CreateCustomerView.as_view(), name='register'),
+    # path('dashboard/', CustomerProfile.as_view(), name='customer_dashboard'),
+    # path('signin/', CustomerLogin.as_view(), name='sign_in')
 ]

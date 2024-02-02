@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
-    'rest_framework',
-    'rest_framework_simplejwt',
     'customer',
+    'rest_framework',
+    'rest_framework.authtoken',
     'vendor',
     
 ]
@@ -86,30 +86,16 @@ DATABASES = {
     }
 }
 
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
-#         'rest_framework.authentication.SessionAuthentication',
-#         'rest_framework.authentication.BasicAuthentication',
-#     ],
-#     # ... other settings
-# }
-# Password validation
+
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ]
-    # # 'DEFAULT_AUTHENTICATION_CLASSES': [
-    # #     'rest_framework_simplejwt.authentication.JWTAuthentication',
-    # # ],
-    # # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    # # 'PAGE_SIZE': 3   
-    # # for project set
-    # 'DEFAULT_PAGINATION_CLASS': 'main.pagination.CustomPagination',
-    # 'PAGE_SIZE':100 
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {

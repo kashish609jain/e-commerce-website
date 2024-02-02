@@ -1,7 +1,7 @@
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-import uuid
+
 
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
@@ -29,7 +29,8 @@ class CustomUserManager(BaseUserManager):
         
 
 class CustomUser(AbstractUser):
-    
+ 
+   
     USER_TYPE_CHOICES = (
       ('VENDOR', 'Vendor'),
       ('CUSTOMER', 'Customer'),
@@ -37,7 +38,7 @@ class CustomUser(AbstractUser):
     )
 
     username = None
-    uid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.AutoField(primary_key=True)
     email = models.EmailField(blank=False, unique=True)
     name = models.CharField(max_length=150, blank=False)
     user_type = models.CharField(choices=USER_TYPE_CHOICES, max_length=15,null=True)
@@ -77,4 +78,14 @@ class Vendor(models.Model):
 
     def __str__(self):
         return self.shop_name
+
+# class FamilyMember(models.Model):
+#     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='family_members')
+#     name = models.CharField(max_length=200)
+   
+
+#     def __str__(self):
+#         return self.name
+    
+    
     

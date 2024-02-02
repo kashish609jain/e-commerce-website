@@ -1,47 +1,26 @@
-#API VIews
 from rest_framework import generics, status
-from rest_framework.generics import RetrieveAPIView, CreateAPIView
-
+from django.shortcuts import render
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404
-from vendor.models import CustomUser
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from .serializers import  CreateCustomerSerializer
 from .models import Customer
-from .permissions import IsCustomer
-from .serializers import CustomerSerializer, UserLoginSerializer
-
-
-# List and Create customers
-class CreateCustomer(generics.CreateAPIView):
+class CreateCustomerView(generics.CreateAPIView):
+    
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
     permission_classes = (AllowAny,)
-    queryset = Customer.objects.all()
-    serializer_class = CustomerSerializer
-
-# Get details of a vendor
-class CustomerProfile(generics.RetrieveAPIView):
-    permission_classes = (IsCustomer,)
-   
-    def get(self, request):
-        customer = get_object_or_404(Customer, user=request.user)
-        data = CustomerSerializer(customer).data
-        return Response(data, status=status.HTTP_200_OK)
-
-
-#Login User
-class CustomerLogin(CreateAPIView):
-
-    serializer_class = UserLoginSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+    serializer_class =  CreateCustomerSerializer
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        response = {
-            'success' : 'True',
-            'status code' : status.HTTP_200_OK,
-            'message': 'User logged in  successfully',
-            'token' : serializer.data['token'],
-            }
-        status_code = status.HTTP_200_OK
+        vendor = serializer.save()
+        return Response(
+            {"detail": "customer registered successfully!"},
+            status=status.HTTP_201_CREATED
+        )
 
-        return Response(response, status=status_code)
+
+    
+      
