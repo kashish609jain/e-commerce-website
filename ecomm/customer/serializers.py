@@ -2,9 +2,8 @@ from rest_framework import serializers, generics, status
 from vendor.models import CustomUser
 from vendor.serializers import UserSerializer, UserLoginSerializer
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import update_last_login
 from .models import Customer
-
+from vendor.exceptions import CustomException
 
 class CreateCustomerSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -23,4 +22,21 @@ class CreateCustomerSerializer(serializers.ModelSerializer):
         customer = Customer.objects.create(user=user, **validated_data)
         return customer
 
+class UserLoginSerializer(serializers.Serializer):
+
+    email = serializers.CharField(max_length=255)
+    password = serializers.CharField(max_length=128, write_only=True)
+    
+    def validate(self, data):
+        email = data.get("email", None)
+        password = data.get("password", None)
+        user = authenticate(email=email, password=password)
+        if user is None:
+            raise CustomException({'detail':'User account does not exist'})  
+        elif not user.user_type == 'CUSTOMER':
+            raise CustomException({'detail':"You are not authorized as a customer"}, status_code=status.HTTP_401_UNAUTHORIZED)
+
+        return {
+            'email':user.email
+        }
 
